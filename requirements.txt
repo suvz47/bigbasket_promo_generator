@@ -1,0 +1,3 @@
+configparser==7.1.0
+google-generativeai==0.8.1
+vertexai==1.66.0
