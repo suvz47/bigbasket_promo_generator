@@ -1,34 +1,45 @@
 import gradio as gr
 import requests
+import os
 
 BASE_URL = "http://localhost:8000"
 
 # Function to generate the banner
-def generate_banner(topic, images):
-    files = [('images', (img.name, open(img, 'rb'))) for img in images]
+def generate_banner(topic, images, aspect_ratio):
+    # Preparing files for the request
+    files = [('images', (img.name, open(img.name, 'rb'))) for img in images]
     data = {
         'topic': topic,
+        'aspect_ratio': aspect_ratio
     }
     response = requests.post(f"{BASE_URL}/generate_banner", data=data, files=files)
     
+    # Close the files to prevent issues
+    for _, (_, file) in files:
+        file.close()
+    
     if response.status_code == 200:
         result = response.json()
-        return result.get("image_path")
+        image_path = result.get("image_path")
+        if image_path:
+            # Construct the full URL to access the generated image
+            full_image_url = f"{BASE_URL}{image_path}"
+            return full_image_url
+        else:
+            return "Error: Generated image not found."
     else:
         return "Error generating banner."
 
+# Function to preview uploaded images
+def preview_images(images):
+    return images
+
 # Gradio Interface
-with gr.Blocks(theme=gr.themes.Soft()) as demo:  # Using a modern theme
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # Main Container for UI elements
     with gr.Row():
-        # Left Column: Logos and Introduction
+        # Left Column: Introduction, Banner Topic, Aspect Ratio, Upload Images, and Generate Button
         with gr.Column(scale=1, min_width=300, elem_id="branding_section"):
-            # Logos for Bigbasket, Google, and Gemini - Without borders, buttons, or shadows
-            with gr.Row():
-                gr.Image(value="images/logos/bigbasket_logo.png", show_label=False, interactive=False, elem_id="logo_bigbasket")
-                gr.Image(value="images/logos/google_logo.png", show_label=False, interactive=False, elem_id="logo_google")
-                gr.Image(value="images/logos/gemini_logo.png", show_label=False, interactive=False, elem_id="logo_gemini")
-
             gr.Markdown(
                 """
                 <div style="text-align: left;">
@@ -38,19 +49,32 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:  # Using a modern theme
                 </div>
                 """, elem_id="intro_text"
             )
-
-        # Right Column: Inputs and Output
-        with gr.Column(scale=1, min_width=400, elem_id="interaction_section"):
-            with gr.Row():
-                topic_input = gr.Textbox(label="📝 Banner Topic", placeholder="Enter the details for your banner", lines=7, elem_id="topic_input")  # Increased height to 3 lines
-                image_input = gr.Files(label="📸 Upload Images", file_types=["image"], type="filepath", elem_id="image_input")  # Allow uploading of multiple images
-
+            # Moved Banner Topic Input Below "Powered by" Text
+            topic_input = gr.Textbox(label="📝 Banner Topic", placeholder="Enter the details for your banner", lines=2, elem_id="topic_input")
+            aspect_ratio_dropdown = gr.Dropdown(
+                label="📐 Select Aspect Ratio",
+                choices=["1:1", "9:16", "16:9", "4:3", "3:4"],
+                elem_id="aspect_ratio_input"
+            )
+            image_input = gr.Files(label="📸 Upload Images", file_types=["image"], type="filepath", elem_id="image_input")
             generate_button = gr.Button("✨ Generate Banner", size="large", elem_id="generate_button")
+
+        # Right Column: Image Preview and Generated Banner
+        with gr.Column(scale=1, min_width=400, elem_id="interaction_section"):
+            image_preview = gr.Gallery(label="👀 Image Preview", elem_id="image_preview", show_label=False, height=300, preview=True)
             generated_image = gr.Image(label="🎨 Generated Banner", type="filepath", interactive=False, elem_id="generated_image")
 
+            # Show uploaded images in the preview
+            image_input.change(
+                fn=preview_images,
+                inputs=image_input,
+                outputs=image_preview
+            )
+
+            # Button to Trigger Banner Generation and Display the Generated Image
             generate_button.click(
-                generate_banner,
-                inputs=[topic_input, image_input],
+                fn=generate_banner,
+                inputs=[topic_input, image_input, aspect_ratio_dropdown],
                 outputs=generated_image
             )
 
@@ -64,35 +88,18 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:  # Using a modern theme
         """, elem_id="footer_text"
     )
 
-# Custom CSS for improving the UI layout and matching logo background
+# Custom CSS for improving the UI layout
 demo.css = """
     #branding_section {
         background-color: #f9f9f9;
         padding: 20px;
         border-radius: 15px;
     }
-    #logo_bigbasket, #logo_google, #logo_gemini {
-        width: 80px;
-        height: 80px;
-        margin: 0 10px;
-        background: none;  /* Ensure there is no background on logos */
-        border: none;  /* Remove border to blend with the page */
-    }
-    #intro_text {
-        padding-top: 15px;
-    }
     #interaction_section {
         padding: 20px;
         background-color: #ffffff;
         border-radius: 15px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    #topic_input {
-        margin-bottom: 10px;
-        height: auto;  /* Let the height adjust to accommodate the number of lines */
-    }
-    #image_input {
-        margin-bottom: 10px;
     }
     #generate_button {
         width: 100%;
@@ -109,17 +116,13 @@ demo.css = """
     #generate_button:hover {
         background-color: #e5533d;
     }
-    #generated_image {
+    #generated_image, #image_preview {
         width: 100%;
-        border: none;  /* Remove border around the generated image */
+        border: none;
         border-radius: 0px;
-    }
-    #footer_text {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 15px;
+        object-fit: cover;
     }
 """
 
-# Launch the demo with side-by-side layout and modern branding
+# Launch the demo
 demo.launch(share=True)

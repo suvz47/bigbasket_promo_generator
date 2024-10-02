@@ -2,7 +2,7 @@ import os
 import configparser
 import PIL
 from PIL import Image
-from typing import Any, List
+from typing import Any, List, Optional, Literal
 from pydantic import BaseModel, Field
 import google.generativeai as genai
 import vertexai
@@ -27,6 +27,7 @@ class BannerGenerator(BaseModel):
     CONFIGS: dict
     topic: str
     images: List[str] | None = Field(default=None)
+    aspect_ratio: Optional[Literal["1:1", "9:16", "16:9", "4:3", "3:4"]] = None  # Added aspect_ratio attribute
     text_model: str = "gemini-1.5-flash"
     image_model: str = "imagen-3.0-generate-001"
     edit_model: str = "imagegeneration@006"
@@ -141,6 +142,11 @@ class BannerGenerator(BaseModel):
     def generate_image(self) -> str:
         """Generates an image based on the given prompt and saves it in images/temp/."""
         prompt = f"""Realistic, subcontextually implied qualitative attributes inspired, excellent image quality ad capturing every detail in json:{self.text_v3}"""
+
+        # Adding the aspect ratio parameter to the image generation
+        if self.aspect_ratio:
+            prompt += f", aspect ratio: {self.aspect_ratio}"
+
         self.img_response_v1 = self.im.generate_images(prompt=prompt)
 
         # Save the generated image to images/temp/
