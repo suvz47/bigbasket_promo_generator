@@ -133,7 +133,7 @@ uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
 
   
 
-5.  **Run the Frontend (Gradio)**:
+5.  **Run the Frontend (Gradio) in a seperate terminal with venv activated**:
 
 ```bash
 
