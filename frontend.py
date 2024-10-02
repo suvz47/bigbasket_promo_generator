@@ -50,7 +50,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 """, elem_id="intro_text"
             )
             # Moved Banner Topic Input Below "Powered by" Text
-            topic_input = gr.Textbox(label="📝 Banner Topic", placeholder="Enter the details for your banner", lines=2, elem_id="topic_input")
+            topic_input = gr.Textbox(label="📝 Banner Details (Product, Theme, Color, etc.)", placeholder="Enter the details for your banner", lines=2, elem_id="topic_input")
             aspect_ratio_dropdown = gr.Dropdown(
                 label="📐 Select Aspect Ratio",
                 choices=["1:1", "9:16", "16:9", "4:3", "3:4"],

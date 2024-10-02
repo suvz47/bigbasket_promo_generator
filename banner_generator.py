@@ -70,7 +70,7 @@ class BannerGenerator(BaseModel):
     def extract_image_information(self) -> str:
         """Extracts information from images using the generative text model."""
         images = self.load_images()
-        extraction_prompt = '''Examine the set of images to provide concise unique insights about content, color, banner size, and product (name, logo, tagline, size, and packaging) in less than 150 words.'''
+        extraction_prompt = '''Examine the set of images to extract information about the product (name, logo) in less than 80 words.'''
         model_input = [extraction_prompt] + images
         response = self.pm.generate_content(model_input)
         print("Attached images examined!")
@@ -84,26 +84,14 @@ class BannerGenerator(BaseModel):
         Extract the following information:
         0. Product: Product name, brand and supplier, logo, tagline, size, packaging if available
         1. Objective: 1 word for primary goal of the banner. Example - Awareness, Engagement, Conversion, Branding
-        2. Age: The target age group. Example - 'Below 18', '18-25', '25-40', '40-60', '60+'
-        3. Gender: Gender preference if applicable. Example - MALE, FEMALE, NON BINARY, ALL
-        4. Festival: Event or occasion it may be tied to. Example - Christmas, Diwali, Black Friday, Summer Sale, New Year, Generic
-        5. Headline: Suggest a main text that captures attention. Example - Discover [product] for [festival], Shop now and save!, Limited time offer, Innovate your life with [product]
-        6. Subheadline: Optional additional supporting information to clarify the offer. Example - Get 50% off until [date], Exclusive deal for festive season, Hurry offer ends soon
-        7. CTA: Add a call to action. Example - Buy now, Shop the collection, Discover More, Sign up today
-        8. Color Scheme: Use color palette based on audience, occasion, or product tone. Example - Red & Gold (Festive, Urgency), Blue & White (Trust, Calm), Green & Brown (Eco-friendly, Natural), Black & White (Elegant, Minimal)
-        9. Typography: Use font styles that resonate with the target demographic. Example - Sans-serif (Modern, Youthful), Serif (Traditional, Trustworthy), Script (Elegant, Formal), Display fonts (Playful, Bold)
-        10. Visual Layout: Use layout pattern to guide user attention. Example - F pattern (Text-heavy), Z pattern (Balanced visuals & text)
-        11. Imagery: Use of product images and contextual photos. If provided reuse them else create own. Examples - Multiple product angles, Lifestyle imagery, Holiday-themed images, Close-up product features
-        12. Branding: Ensure logo placement and brand consistency. Top-left for logo, Consistent brand colors, Brand slogan or tagline inclusion
-        13. Emotional Appeal: Emotion that the banner evokes based on psychographics and event. Example - Nostalgia (Older audiences, festive), Excitement (Younger audiences, sales), Trust and reliability (Product-focused), Aspiration (Luxury goods)
-        14. Adaptability: If asked only then ensure banner scales well on mobile and other devices else only website design sizes. Example - Mobile-first design, Large, clear CTA, Minimal text for mobile
-        15. Psychographics: Tailor the banner’s design, tone, and visuals based on psychographic factors and set levels for suitable OCEAN traits applicable. Example - [High/Low Openness (Innovation, Creativity): Innovative, creative visuals], [High/Low Conscientiousness (Order, Reliability): Clean, organized layout], [High/Low Extraversion (Vibrancy, Sociability): Bold colors, active themes], [High/Low Agreeableness (Warmth, Trust): Soft tones, community appeal], [High/Low Neuroticism (Stability, Reassurance)]
-        16. Region: Location if applicable. Example - USA, London, India, Generic
-        17. Specifications: Aspect ratio: 1:7, Resolution: 1360px (width) x 800px (height) (preferable for good resolution)
-        18. Ethnicity: Identify target population group that will resonate well with product
-        19. Promotional offer: Suggest 1 best promotional offer. Example - MAX ₹99 OFF, UP TO 60% OFF, UNDER ₹999, MIN ₹10 OFF, MIN 20% OFF, STARTS @₹99, FLAT ₹100 OFF, FLAT 20% OFF, ₹499 STORE, BUY 2 GET 1 FREE
-        20. Background color gradient: Dynamic color generation to match overall look and feel
-        21. Background theme: Festival oriented or generic if no festival
+        2. Festival: Event or occasion it may be tied to. Example - Christmas, Diwali, Black Friday, Summer Sale, New Year, Generic
+        3. Headline: Suggest a main text that captures attention. Example - Discover [product] for [festival], Shop now and save!, Limited time offer, Innovate your life with [product]
+        4. Subheadline: Optional additional supporting information to clarify the offer. Example - Get 50% off until [date], Exclusive deal for festive season, Hurry offer ends soon
+        5. CTA: Add a call to action. Example - Buy now, Shop the collection, Discover More, Sign up today
+        6. Color Scheme: Use color palette based on audience, occasion, or product tone. Example - Red & Gold (Festive, Urgency), Blue & White (Trust, Calm), Green & Brown (Eco-friendly, Natural), Black & White (Elegant, Minimal)
+        7. Promotional offer: Suggest 1 best promotional offer. Example - MAX ₹99 OFF, UP TO 60% OFF, UNDER ₹999, MIN ₹10 OFF, MIN 20% OFF, STARTS @₹99, FLAT ₹100 OFF, FLAT 20% OFF, ₹499 STORE, BUY 2 GET 1 FREE
+        8. Background color gradient: Dynamic color generation to match overall look and feel
+        9. Background theme: Festival oriented or generic if no festival
         """
         self.text_v0 = self.pm.generate_content(out_text).text
 
@@ -161,25 +149,15 @@ class BannerGenerator(BaseModel):
     def identify_lags(self) -> str:
         """Identifies quality issues in the generated image and provides suggestions for improvement."""
         prompt = f"""Be direct. Quality check the banner out of 10 on:
-        1. Ensure visibility of brand name and logo
-        2. Ensure background reflecting brand color consistency
-        3. Ensure background if too bland then should be reflecting one of the following: people, culture, geographical, lifestage, product theme
-        4. Promotional offer clearly applied and visible
-        5. Ensure ALL texts pass grammatical checks
-        6. Excellent image quality
-        7. Jump up the image resolution if blurred
-        8. Background gradient and theme aligned with context
-        9. Aspect ratio to 1:7
-        10. Resolution to 1360px (width) x 800px (height)
-        11. Product name clear
-        12. Product picture clear
-        13. Product size clear if available
-        14. Product packaging clear if available
-        15. Product tagline clear if available
+        1. Promotional offer present as per instructions below
+        2. Ensure ALL texts pass grammatical checks
+        3. Color pallette as per instructions below
+        4. Occassion or festival theme is present as per instructions below
+
+        ONLY USE INFORMATION FROM {self.text_v3}. Don't DO NOT make up colors, promo or occasion. Make sure the promo and color pallete is followed as per above instructions.
 
         Precisely point out errors and corresponding actions to fix the image where score is below 8.
-        Do not output anything about elements that need no change. Suggest only minute to below-average changes, not drastic ones.
-        Use this as a benchmark: {self.text_v3}
+        Do not output anything about elements that need no change.
         """
         temp_img_path = 'images/temp/temp.jpg'
         response = self.pm.generate_content([prompt, PIL.Image.open(temp_img_path)])
