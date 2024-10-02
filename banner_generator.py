@@ -145,9 +145,9 @@ class BannerGenerator(BaseModel):
 
         # Adding the aspect ratio parameter to the image generation
         if self.aspect_ratio:
-            prompt += f", aspect ratio: {self.aspect_ratio}"
-
-        self.img_response_v1 = self.im.generate_images(prompt=prompt)
+            self.img_response_v1 = self.im.generate_images(prompt=prompt, aspect_ratio=self.aspect_ratio)
+        else:
+            self.img_response_v1 = self.im.generate_images(prompt=prompt)
 
         # Save the generated image to images/temp/
         temp_img_path = 'images/temp/temp.jpg'
