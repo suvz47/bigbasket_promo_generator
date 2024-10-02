@@ -83,7 +83,7 @@ Welcome to **BigBasket Banner Generator**, a simple yet powerful tool for creati
   4. **Select Aspect Ratio**: Choose from the dropdown (e.g., `1:1`, `9:16`).
   5. **Generate**: Click on "✨ Generate Banner". Your banner will be generated in less than 50 seconds!
 
-  ![frontend-screenshot](https://via.placeholder.com/800x400?text=Frontend+Screenshot)
+  ![frontend-screenshot](https://github.com/suvz47/bigbasket_promo_generator/blob/main/images/other/frontend.png)
   
 </details>
 
@@ -109,8 +109,6 @@ Welcome to **BigBasket Banner Generator**, a simple yet powerful tool for creati
 
 ## 📸 Demo
 
-![banner-demo](https://via.placeholder.com/1200x400?text=Banner+Generator+Demo)
-
 > 🎥 **Watch the Full Demo on [YouTube](https://youtu.be/FRH5ro5l8lQ)**.
 
 ---
@@ -118,7 +116,7 @@ Welcome to **BigBasket Banner Generator**, a simple yet powerful tool for creati
 ## ⚡ Technologies Used
 - **🖥️ Backend**: FastAPI - Lightning-fast Python web framework.
 - **🤖 AI Models**: Google Gemini, Google Imagen via Google Vertex AI.
-- **🎨 UI**: Gradio - Easy to use UI for interacting with machine learning models.
+- **🎨 UI**: Gradio - Easxy to use UI for interacting with machine learning models.
 - **💾 Storage**: Local storage for saving generated images. (alternate - GCP buckets)
 
 ---
@@ -134,7 +132,7 @@ Welcome to **BigBasket Banner Generator**, a simple yet powerful tool for creati
 <details>
   <summary><b>🌍 Architecture Overview</b></summary>
   
-  ![architecture-diagram](https://via.placeholder.com/800x400?text=Architecture+Diagram)
+  ![architecture-diagram](https://github.com/suvz47/bigbasket_promo_generator/blob/main/images/other/architecture.png)
   
   **Components**:
   - **Frontend**: User interaction layer.
