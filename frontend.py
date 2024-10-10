@@ -38,13 +38,24 @@ def preview_images(images):
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # Main Container for UI elements
     with gr.Row():
+        # Navigation Bar
+        with gr.Column(scale=1, min_width=800):
+            gr.Markdown(
+                """
+                <div style="background-color: #76B947; border-radius: 10px; padding: 10px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+                    <h1 style="font-size: 2.5rem; color: white; text-align: center; margin: 0;">Bigbasket Banner Generator</h1>
+                </div>
+                """, elem_id="nav_bar"
+            )
+        
+    with gr.Row():
         # Left Column: Introduction, Banner Topic, Aspect Ratio, Upload Images, and Generate Button
         with gr.Column(scale=1, min_width=300, elem_id="branding_section"):
             gr.Markdown(
                 """
                 <div style="text-align: left;">
-                    <h1 style="font-size: 2.5rem; color: #ff6347; font-weight: bold;">Bigbasket Banner Generator</h1>
-                    <p style="font-size: 1.25rem; color: #333;">Create beautiful, impactful banners with ease! Simply upload images, enter the topic, and let our AI generate stunning banners for your projects.</p>
+                    <h2 style="font-size: 2rem; color: #ff6347; font-weight: bold;">Create Your Banner</h2>
+                    <p style="font-size: 1.25rem; color: #444;">Create beautiful, impactful banners with ease! Simply upload images, enter the topic, and let our AI generate stunning banners for your projects.</p>
                     <p style="font-size: 1.1rem; color: #555;">Powered by <b>Google Gemini</b> and <b>Google Imagen</b>.</p>
                 </div>
                 """, elem_id="intro_text"
@@ -126,3 +137,4 @@ demo.css = """
 
 # Launch the demo
 demo.launch(share=True)
+

@@ -301,4 +301,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
   
 
-###  ⚡ Powered by Gemini AI 🧠 | Built for Designers 🎨 | Made with ❤️ by [Suvojit](https://www.linkedin.com/in/suvojith/), Gayathri, Varen and Payel.
+###  ⚡ Powered by Gemini AI 🧠 | Built for Designers 🎨 | Made with ❤️ by [Suvojit](https://www.linkedin.com/in/suvojith/), Gayathri, Varen and Payal.
